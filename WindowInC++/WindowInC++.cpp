@@ -16,8 +16,8 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-const int WEIGHT = 290;
-const int HEIGHT = 500;
+const int WIDTH = 319;
+const int HEIGHT = 490;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -102,7 +102,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
 
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, 0, WEIGHT, HEIGHT, nullptr, nullptr, hInstance, nullptr);
+        CW_USEDEFAULT, 0, WIDTH, HEIGHT, nullptr, nullptr, hInstance, nullptr);
 
     if (!hWnd)
     {
@@ -115,26 +115,30 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         10, 10, 260, 40, hWnd, nullptr, hInstance, nullptr);
 
     // Создание кнопок
-    CreateWindowW(L"BUTTON", L"1", WS_CHILD | WS_VISIBLE, 20, 300, 50, 50, hWnd, (HMENU)1, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"2", WS_CHILD | WS_VISIBLE, 80, 300, 50, 50, hWnd, (HMENU)2, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"3", WS_CHILD | WS_VISIBLE, 140, 300, 50, 50, hWnd, (HMENU)3, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"4", WS_CHILD | WS_VISIBLE, 20, 240, 50, 50, hWnd, (HMENU)4, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"5", WS_CHILD | WS_VISIBLE, 80, 240, 50, 50, hWnd, (HMENU)5, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"6", WS_CHILD | WS_VISIBLE, 140, 240, 50, 50, hWnd, (HMENU)6, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"7", WS_CHILD | WS_VISIBLE, 20, 180, 50, 50, hWnd, (HMENU)7, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"8", WS_CHILD | WS_VISIBLE, 80, 180, 50, 50, hWnd, (HMENU)8, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"9", WS_CHILD | WS_VISIBLE, 140, 180, 50, 50, hWnd, (HMENU)9, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"0", WS_CHILD | WS_VISIBLE, 80, 360, 50, 50, hWnd, (HMENU)100, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"1", WS_CHILD | WS_VISIBLE, 20,  300, 50, 50, hWnd, (HMENU)1,   hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"2", WS_CHILD | WS_VISIBLE, 80,  300, 50, 50, hWnd, (HMENU)2,   hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"3", WS_CHILD | WS_VISIBLE, 140, 300, 50, 50, hWnd, (HMENU)3,   hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"4", WS_CHILD | WS_VISIBLE, 20,  240, 50, 50, hWnd, (HMENU)4,   hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"5", WS_CHILD | WS_VISIBLE, 80,  240, 50, 50, hWnd, (HMENU)5,   hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"6", WS_CHILD | WS_VISIBLE, 140, 240, 50, 50, hWnd, (HMENU)6,   hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"7", WS_CHILD | WS_VISIBLE, 20,  180, 50, 50, hWnd, (HMENU)7,   hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"8", WS_CHILD | WS_VISIBLE, 80,  180, 50, 50, hWnd, (HMENU)8,   hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"9", WS_CHILD | WS_VISIBLE, 140, 180, 50, 50, hWnd, (HMENU)9,   hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"0", WS_CHILD | WS_VISIBLE, 80,  360, 50, 50, hWnd, (HMENU)100, hInstance, nullptr);
     CreateWindowW(L"BUTTON", L"+", WS_CHILD | WS_VISIBLE, 200, 300, 50, 50, hWnd, (HMENU)101, hInstance, nullptr);
     CreateWindowW(L"BUTTON", L"-", WS_CHILD | WS_VISIBLE, 200, 240, 50, 50, hWnd, (HMENU)102, hInstance, nullptr);
     CreateWindowW(L"BUTTON", L"*", WS_CHILD | WS_VISIBLE, 200, 180, 50, 50, hWnd, (HMENU)103, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"/", WS_CHILD | WS_VISIBLE, 200, 120, 50, 50, hWnd, (HMENU)104, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"÷", WS_CHILD | WS_VISIBLE, 200, 120, 50, 50, hWnd, (HMENU)104, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"⌫",WS_CHILD | WS_VISIBLE, 200, 60,  50, 50, hWnd, (HMENU)105, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"C", WS_CHILD | WS_VISIBLE, 140, 60,  50, 50, hWnd, (HMENU)106, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"CE",WS_CHILD | WS_VISIBLE, 80,  60,  50, 50, hWnd, (HMENU)107, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"%", WS_CHILD | WS_VISIBLE, 20,  60,  50, 50, hWnd, (HMENU)108, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"⅟x", WS_CHILD | WS_VISIBLE, 20,  120,  50, 50, hWnd, (HMENU)109, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"x²", WS_CHILD | WS_VISIBLE, 80,  120,  50, 50, hWnd, (HMENU)110, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"²√x", WS_CHILD | WS_VISIBLE, 140,  120,  50, 50, hWnd, (HMENU)111, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L".", WS_CHILD | WS_VISIBLE, 140, 360, 50, 50, hWnd, (HMENU)112, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"+/-", WS_CHILD | WS_VISIBLE, 20, 360, 50, 50, hWnd, (HMENU)113, hInstance, nullptr);
     CreateWindowW(L"BUTTON", L"=", WS_CHILD | WS_VISIBLE, 200, 360, 50, 50, hWnd, (HMENU)202, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"%", WS_CHILD | WS_VISIBLE, 20, 60, 50, 50, hWnd, (HMENU)108, hInstance, nullptr);
-
-    CreateWindowW(L"BUTTON", L"<x", WS_CHILD | WS_VISIBLE, 200, 60, 50, 50, hWnd, (HMENU)105, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"C", WS_CHILD | WS_VISIBLE, 140, 60, 50, 50, hWnd, (HMENU)106, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"CE", WS_CHILD | WS_VISIBLE, 80, 60, 50, 50, hWnd, (HMENU)107, hInstance, nullptr);
 
 
     ShowWindow(hWnd, nCmdShow);
@@ -153,6 +157,56 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - отправить сообщение о выходе и вернуться
 //
 //
+double Position_ratio_size(double ratio, double size, int px) { // Функция для расположения кнопок с указанием размера можно применять для width и height
+    double result;
+    if (size > 0) {
+        result = (ratio * size) + px;
+    }
+    else {
+        result = px;
+    }
+    return result;  // Возвращаем результат
+}
+
+// Функция для преобразования wchar_t в std::string
+std::string convertWCharToString(const wchar_t* wstr) {
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    return converter.to_bytes(wstr);
+}
+
+// Функция для преобразования std::string в wchar_t
+std::wstring convertStringToWChar(const std::string& str) {
+    return std::wstring(str.begin(), str.end());
+}
+
+// Функция для обработки нажатия кнопки "1/"
+void handleReciprocalButton(HWND hEdit) {
+    // Получаем текущее выражение из текстового поля
+    wchar_t buffer[256];
+    SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
+
+    std::wstring wstr(buffer); // используем wstring
+    std::string expression(wstr.begin(), wstr.end()); // преобразуем в std::string
+
+    // Находим последнее введенное число
+    std::string lastNumber;
+    size_t pos = expression.find_last_of("0123456789");
+
+    // Считываем последнее число, если оно есть
+    while (pos != std::string::npos && (isdigit(expression[pos]) || expression[pos] == '.')) {
+        lastNumber = expression[pos] + lastNumber;
+        pos--;
+    }
+
+    if (!lastNumber.empty()) {
+        // Заменяем последнее введенное число на "1/число"
+        expression.replace(expression.find(lastNumber), lastNumber.length(), "1/" + lastNumber);
+    }
+
+    // Устанавливаем обновленное выражение обратно в текстовое поле
+    SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(std::wstring(expression.begin(), expression.end()).c_str()));
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static double firstNumber = 0;
@@ -246,27 +300,80 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
             break;
         }
+        case 105: {
+            SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
+            wcscat_s(buffer, L"⌫");  // Добавление оператора /
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            break;
+        }
+        case 106: {
+            SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
+            wcscat_s(buffer, L"C");  // Добавление оператора /
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            break;
+        }
+        case 107: {
+            SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
+            wcscat_s(buffer, L"CE");  // Добавление оператора /
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            break;
+        }
         case 108: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
             wcscat_s(buffer, L"%");  // Добавление оператора %
             SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
             break;
         }
+        case 109: {  // Код для кнопки "1/"
+            handleReciprocalButton(hEdit);
+            break;
+        }
+        case 110: {
+            SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
+            wcscat_s(buffer, L"²");  // Добавление оператора %
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            break;
+        }
+        case 111: {
+            SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
+            wcscat_s(buffer, L"2<");  // Добавление оператора %
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            break;
+        }
+        case 112: {
+            SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
+            wcscat_s(buffer, L".");  // Добавление оператора %
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            break;
+        }
+        case 113: {
+            SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
+            wcscat_s(buffer, L"+/-");  // Добавление оператора %
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            break;
+        }
         case 202: { // Нажата кнопка "="
             try {
+                // Получаем текущее выражение
                 wchar_t buffer[256];
                 SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
 
-                std::wstring wExpression(buffer);
-                std::string expression(wExpression.begin(), wExpression.end());
+                std::wstring wstr(buffer);
+                std::string expression(wstr.begin(), wstr.end()); // Преобразуем в std::string
 
+                // Токенизация выражения
                 std::vector<std::string> tokens = tokenize(expression);
+
+                // Преобразование в RPN
                 std::vector<std::string> rpn = toRPN(tokens);
 
+                // Вычисление результата
                 double result = evaluateRPN(rpn);
 
-                swprintf_s(buffer, 256, L"%f", result);
-                SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+                // Отображение результата в вашем окне
+                std::string resultStr = std::to_string(result);
+                SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(std::wstring(resultStr.begin(), resultStr.end()).c_str()));
+                break;
             }
             catch (...) {
                 SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(L"Ошибка"));
@@ -286,6 +393,47 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
         break;
     }
+    case WM_SIZE: {
+        // Получаем новый размер окна
+        int width = LOWORD(lParam);
+        int height = HIWORD(lParam);
+        int WIDTH_RATIO = width - (WIDTH * 0.72);
+        int HEIGHT_RATIO = height - (HEIGHT * 0.765);
+
+        // Изменяем размер и расположение элементов, если нужно
+        MoveWindow(hEdit, 0, 0, width, height - 370, TRUE);
+
+        // Например, можно изменять кнопки в зависимости от размера окна
+        MoveWindow(GetDlgItem(hWnd, 1),   Position_ratio_size(0, 74, 4), Position_ratio_size(5, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 1
+        MoveWindow(GetDlgItem(hWnd, 4),   Position_ratio_size(0, 74, 4), Position_ratio_size(4, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 4
+        MoveWindow(GetDlgItem(hWnd, 7),   Position_ratio_size(0, 74, 4), Position_ratio_size(3, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 7
+        MoveWindow(GetDlgItem(hWnd, 108), Position_ratio_size(0, 74, 4), Position_ratio_size(1, 60, 6),  WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки %
+        MoveWindow(GetDlgItem(hWnd, 109), Position_ratio_size(0, 74, 4), Position_ratio_size(2, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки ⅟x
+        MoveWindow(GetDlgItem(hWnd, 113), Position_ratio_size(0, 74, 4), Position_ratio_size(6, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки +/-
+        MoveWindow(GetDlgItem(hWnd, 2),   Position_ratio_size(1, 74, 4), Position_ratio_size(5, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 2
+        MoveWindow(GetDlgItem(hWnd, 5),   Position_ratio_size(1, 74, 4), Position_ratio_size(4, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 5
+        MoveWindow(GetDlgItem(hWnd, 8),   Position_ratio_size(1, 74, 4), Position_ratio_size(3, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 8
+        MoveWindow(GetDlgItem(hWnd, 100), Position_ratio_size(1, 74, 4), Position_ratio_size(6, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 0
+        MoveWindow(GetDlgItem(hWnd, 107), Position_ratio_size(1, 74, 4), Position_ratio_size(1, 60, 6),  WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки CE
+        MoveWindow(GetDlgItem(hWnd, 110), Position_ratio_size(1, 74, 4), Position_ratio_size(2, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки x²
+        MoveWindow(GetDlgItem(hWnd, 3),   Position_ratio_size(2, 74, 4), Position_ratio_size(5, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 3
+        MoveWindow(GetDlgItem(hWnd, 6),   Position_ratio_size(2, 74, 4), Position_ratio_size(4, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 6
+        MoveWindow(GetDlgItem(hWnd, 9),   Position_ratio_size(2, 74, 4), Position_ratio_size(3, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 9
+        MoveWindow(GetDlgItem(hWnd, 106), Position_ratio_size(2, 74, 4), Position_ratio_size(1, 60, 6),  WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки C
+        MoveWindow(GetDlgItem(hWnd, 111), Position_ratio_size(2, 74, 4), Position_ratio_size(2, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки ²√x
+        MoveWindow(GetDlgItem(hWnd, 112), Position_ratio_size(2, 74, 4), Position_ratio_size(6, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки .
+        MoveWindow(GetDlgItem(hWnd, 101), Position_ratio_size(3, 74, 4), Position_ratio_size(5, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки +
+        MoveWindow(GetDlgItem(hWnd, 102), Position_ratio_size(3, 74, 4), Position_ratio_size(4, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки -
+        MoveWindow(GetDlgItem(hWnd, 103), Position_ratio_size(3, 74, 4), Position_ratio_size(3, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки *
+        MoveWindow(GetDlgItem(hWnd, 104), Position_ratio_size(3, 74, 4), Position_ratio_size(2, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки /
+        MoveWindow(GetDlgItem(hWnd, 105), Position_ratio_size(3, 74, 4), Position_ratio_size(1, 60, 6),  WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки ⌫
+        MoveWindow(GetDlgItem(hWnd, 202), Position_ratio_size(3, 74, 4), Position_ratio_size(6, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки =
+        
+        // Аналогично для других кнопок
+
+        break;
+    }
+
     default: {
         return DefWindowProc(hWnd, message, wParam, lParam);
     }

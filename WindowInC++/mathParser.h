@@ -21,5 +21,6 @@ std::vector<std::string> toRPN(const std::vector<std::string>& tokens);
 
 // ¬ычисление выражени€ в обратной польской нотации (RPN)
 double evaluateRPN(const std::vector<std::string>& rpn);
+double processExpression(std::string& expression);
 
 #endif // EXPRESSION_PARSER_H

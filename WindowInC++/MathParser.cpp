@@ -1,21 +1,23 @@
-#include "mathParser.h"
+п»ї#include "mathParser.h"
 #include <stack>
 #include <cctype>
 #include <cmath>
+#include <vector>
+#include <string>
 
-// Проверка, является ли символ оператором
+// РџСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё СЃРёРјРІРѕР» РѕРїРµСЂР°С‚РѕСЂРѕРј
 bool isOperator(char c) {
-    return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '1/';
 }
 
-// Приоритет операций
+// РџСЂРёРѕСЂРёС‚РµС‚ РѕРїРµСЂР°С†РёР№
 int getPrecedence(char op) {
     if (op == '+' || op == '-' || op == '%') return 1;
     if (op == '*' || op == '/') return 2;
     return 0;
 }
 
-// Выполнение операции
+// Р’С‹РїРѕР»РЅРµРЅРёРµ РѕРїРµСЂР°С†РёРё
 double applyOperation(double a, double b, char op) {
     switch (op) {
     case '+': return a + b;
@@ -23,11 +25,11 @@ double applyOperation(double a, double b, char op) {
     case '*': return a * b;
     case '/': return a / b;
     case '%': return a * (b / 100);
+    case '1/': return 1 / a;
     }
     return 0;
 }
 
-// Разбор строки на токены (числа и операторы)
 std::vector<std::string> tokenize(const std::string& expression) {
     std::vector<std::string> tokens;
     std::string num;
@@ -35,34 +37,35 @@ std::vector<std::string> tokenize(const std::string& expression) {
     for (size_t i = 0; i < expression.length(); ++i) {
         char c = expression[i];
 
-        if (isdigit(c) || c == '.') {  // Число
-            num += c;
+        if (isdigit(c) || c == '.') {  // Р•СЃР»Рё СЃРёРјРІРѕР» - СЌС‚Рѕ С‡РёСЃР»Рѕ
+            num += c;  // Р”РѕР±Р°РІР»СЏРµРј Рє С‚РµРєСѓС‰РµРјСѓ С‡РёСЃР»Сѓ
         }
         else {
             if (!num.empty()) {
-                tokens.push_back(num);  // Добавляем число в токены
-                num.clear();
+                tokens.push_back(num);  // Р”РѕР±Р°РІР»СЏРµРј С‡РёСЃР»Рѕ РІ С‚РѕРєРµРЅС‹
+                num.clear();  // РћС‡РёС‰Р°РµРј С‚РµРєСѓС‰РµРµ С‡РёСЃР»Рѕ
             }
             if (c == '(' || c == ')' || isOperator(c)) {
-                tokens.push_back(std::string(1, c));  // Добавляем операторы и скобки
+                tokens.push_back(std::string(1, c));  // Р”РѕР±Р°РІР»СЏРµРј РѕРїРµСЂР°С‚РѕСЂС‹
             }
         }
     }
 
     if (!num.empty()) {
-        tokens.push_back(num);  // Добавляем последнее число
+        tokens.push_back(num);  // Р”РѕР±Р°РІР»СЏРµРј РїРѕСЃР»РµРґРЅРµРµ С‡РёСЃР»Рѕ
     }
 
     return tokens;
 }
 
-// Преобразование инфиксного выражения в обратную польскую нотацию (RPN)
+
+// РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РёРЅС„РёРєСЃРЅРѕРіРѕ РІС‹СЂР°Р¶РµРЅРёСЏ РІ РѕР±СЂР°С‚РЅСѓСЋ РїРѕР»СЊСЃРєСѓСЋ РЅРѕС‚Р°С†РёСЋ (RPN)
 std::vector<std::string> toRPN(const std::vector<std::string>& tokens) {
     std::vector<std::string> output;
     std::stack<std::string> operators;
 
     for (const auto& token : tokens) {
-        if (isdigit(token[0])) {  // Число
+        if (isdigit(token[0])) {  // Р§РёСЃР»Рѕ
             output.push_back(token);
         }
         else if (token == "(") {
@@ -73,9 +76,9 @@ std::vector<std::string> toRPN(const std::vector<std::string>& tokens) {
                 output.push_back(operators.top());
                 operators.pop();
             }
-            operators.pop();  // Убираем "("
+            operators.pop();  // РЈР±РёСЂР°РµРј "("
         }
-        else if (isOperator(token[0])) {  // Оператор
+        else if (isOperator(token[0])) {  // РћРїРµСЂР°С‚РѕСЂ
             while (!operators.empty() && getPrecedence(operators.top()[0]) >= getPrecedence(token[0])) {
                 output.push_back(operators.top());
                 operators.pop();
@@ -92,20 +95,28 @@ std::vector<std::string> toRPN(const std::vector<std::string>& tokens) {
     return output;
 }
 
-// Вычисление выражения в обратной польской нотации (RPN)
+// Р’С‹С‡РёСЃР»РµРЅРёРµ РІС‹СЂР°Р¶РµРЅРёСЏ РІ РѕР±СЂР°С‚РЅРѕР№ РїРѕР»СЊСЃРєРѕР№ РЅРѕС‚Р°С†РёРё (RPN), РґРѕР±Р°РІР»СЏРµРј РїРѕРґРґРµСЂР¶РєСѓ СѓРЅР°СЂРЅС‹С… РѕРїРµСЂР°С†РёР№
 double evaluateRPN(const std::vector<std::string>& rpn) {
     std::stack<double> values;
 
     for (const auto& token : rpn) {
-        if (isdigit(token[0])) {  // Число
+        if (isdigit(token[0])) {  // Р§РёСЃР»Рѕ
             values.push(std::stod(token));
         }
-        else if (isOperator(token[0])) {  // Оператор
-            double b = values.top(); values.pop();
-            double a = values.top(); values.pop();
-            values.push(applyOperation(a, b, token[0]));
+        else if (isOperator(token[0])) {  // РћРїРµСЂР°С‚РѕСЂ
+            if (token == "1/") {  // РЈРЅР°СЂРЅС‹Рµ РѕРїРµСЂР°С†РёРё
+                double a = values.top(); values.pop();
+                values.push(applyOperation(a, 0, token[0]));  // РЈРЅР°СЂРЅР°СЏ РѕРїРµСЂР°С†РёСЏ
+            }
+            else {  // Р‘РёРЅР°СЂРЅС‹Рµ РѕРїРµСЂР°С†РёРё
+                double b = values.top(); values.pop();
+                double a = values.top(); values.pop();
+                values.push(applyOperation(a, b, token[0]));  // Р‘РёРЅР°СЂРЅР°СЏ РѕРїРµСЂР°С†РёСЏ
+            }
         }
     }
 
     return values.top();
 }
+
+
