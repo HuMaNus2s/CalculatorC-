@@ -6,27 +6,27 @@
 #include <string>
 
 // Проверка, является ли символ оператором
-bool isOperator(char c) {
-    return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '1/';
+bool isOperator(const std::string& token) {
+    return token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "1/" || token == "²";
 }
 
 // Приоритет операций
-int getPrecedence(char op) {
-    if (op == '+' || op == '-' || op == '%') return 1;
-    if (op == '*' || op == '/') return 2;
+int getPrecedence(const std::string& op) {
+    if (op == "+" || op == "-" || op == "%") return 1;
+    if (op == "*" || op == "/") return 2;
+    if (op == "²") return 3;  // Унарная операция имеет более высокий приоритет
     return 0;
 }
 
 // Выполнение операции
-double applyOperation(double a, double b, char op) {
-    switch (op) {
-    case '+': return a + b;
-    case '-': return a - b;
-    case '*': return a * b;
-    case '/': return a / b;
-    case '%': return a * (b / 100);
-    case '1/': return 1 / a;
-    }
+double applyOperation(double a, double b, const std::string& op) {
+    if (op == "+") return a + b;
+    if (op == "-") return a - b;
+    if (op == "*") return a * b;
+    if (op == "/") return a / b;
+    if (op == "%") return a * (b / 100);
+    if (op == "1/") return 1 / a;
+    if (op == "²") return a * a;  // Возведение в квадрат
     return 0;
 }
 
@@ -45,7 +45,7 @@ std::vector<std::string> tokenize(const std::string& expression) {
                 tokens.push_back(num);  // Добавляем число в токены
                 num.clear();  // Очищаем текущее число
             }
-            if (c == '(' || c == ')' || isOperator(c)) {
+            if (c == '(' || c == ')' || isOperator(std::string(1, c))) {
                 tokens.push_back(std::string(1, c));  // Добавляем операторы
             }
         }
@@ -57,7 +57,6 @@ std::vector<std::string> tokenize(const std::string& expression) {
 
     return tokens;
 }
-
 
 // Преобразование инфиксного выражения в обратную польскую нотацию (RPN)
 std::vector<std::string> toRPN(const std::vector<std::string>& tokens) {
@@ -78,8 +77,8 @@ std::vector<std::string> toRPN(const std::vector<std::string>& tokens) {
             }
             operators.pop();  // Убираем "("
         }
-        else if (isOperator(token[0])) {  // Оператор
-            while (!operators.empty() && getPrecedence(operators.top()[0]) >= getPrecedence(token[0])) {
+        else if (isOperator(token)) {  // Оператор
+            while (!operators.empty() && getPrecedence(operators.top()) >= getPrecedence(token)) {
                 output.push_back(operators.top());
                 operators.pop();
             }
@@ -95,7 +94,7 @@ std::vector<std::string> toRPN(const std::vector<std::string>& tokens) {
     return output;
 }
 
-// Вычисление выражения в обратной польской нотации (RPN), добавляем поддержку унарных операций
+// Вычисление выражения в обратной польской нотации (RPN)
 double evaluateRPN(const std::vector<std::string>& rpn) {
     std::stack<double> values;
 
@@ -103,20 +102,22 @@ double evaluateRPN(const std::vector<std::string>& rpn) {
         if (isdigit(token[0])) {  // Число
             values.push(std::stod(token));
         }
-        else if (isOperator(token[0])) {  // Оператор
+        else if (isOperator(token)) {  // Оператор
             if (token == "1/") {  // Унарные операции
                 double a = values.top(); values.pop();
-                values.push(applyOperation(a, 0, token[0]));  // Унарная операция
+                values.push(applyOperation(a, 0, "1/"));  // Унарная операция
+            }
+            else if (token == "²") {  // Унарные операции
+                double a = values.top(); values.pop();
+                values.push(applyOperation(a, 0, "²"));  // Унарная операция
             }
             else {  // Бинарные операции
                 double b = values.top(); values.pop();
                 double a = values.top(); values.pop();
-                values.push(applyOperation(a, b, token[0]));  // Бинарная операция
+                values.push(applyOperation(a, b, token));  // Бинарная операция
             }
         }
     }
 
     return values.top();
 }
-
-

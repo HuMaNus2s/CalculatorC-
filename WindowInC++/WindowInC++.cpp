@@ -207,6 +207,18 @@ void handleReciprocalButton(HWND hEdit) {
     SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(std::wstring(expression.begin(), expression.end()).c_str()));
 }
 
+// Преобразование std::wstring в UTF-8
+std::string wstringToUtf8(const std::wstring& wstr) {
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    return converter.to_bytes(wstr);
+}
+
+// Преобразование UTF-8 в std::wstring
+std::wstring utf8ToWstring(const std::string& str) {
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    return converter.from_bytes(str);
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static double firstNumber = 0;
@@ -302,7 +314,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         case 105: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"⌫");  // Добавление оператора /
+            wcscat_s(buffer, L"<=");  // Добавление оператора /
             SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
             break;
         }
@@ -354,12 +366,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         case 202: { // Нажата кнопка "="
             try {
-                // Получаем текущее выражение
+                // Получаем текущее выражение как широкую строку (Unicode)
                 wchar_t buffer[256];
-                SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
+                SendMessageW(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
 
                 std::wstring wstr(buffer);
-                std::string expression(wstr.begin(), wstr.end()); // Преобразуем в std::string
+
+                // Преобразуем широкую строку в строку UTF-8
+                std::string expression = wstringToUtf8(wstr);
 
                 // Токенизация выражения
                 std::vector<std::string> tokens = tokenize(expression);
@@ -370,13 +384,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 // Вычисление результата
                 double result = evaluateRPN(rpn);
 
-                // Отображение результата в вашем окне
+                // Отображение результата в вашем окне (с преобразованием обратно в wide-строку)
                 std::string resultStr = std::to_string(result);
-                SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(std::wstring(resultStr.begin(), resultStr.end()).c_str()));
-                break;
+                SendMessageW(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(utf8ToWstring(resultStr).c_str()));
             }
             catch (...) {
-                SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(L"Ошибка"));
+                SendMessageW(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(L"Ошибка"));
             }
             break;
         }
