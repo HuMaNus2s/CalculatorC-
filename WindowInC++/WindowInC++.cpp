@@ -1,4 +1,4 @@
-﻿// WindowInC++.cpp : Определяет точку входа для приложения.
+// WindowInC++.cpp : Определяет точку входа для приложения.
 //
 
 #include "framework.h"
@@ -110,7 +110,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     }
 
     // Создание текстового поля для ввода/вывода
-    hEdit = CreateWindowW(L"EDIT", nullptr,
+    hEdit = CreateWindowW(L"EDIT", L"0",
         WS_CHILD | WS_VISIBLE | WS_BORDER | ES_RIGHT,
         10, 10, 260, 40, hWnd, nullptr, hInstance, nullptr);
 
@@ -134,7 +134,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     CreateWindowW(L"BUTTON", L"CE",WS_CHILD | WS_VISIBLE, 80,  60,  50, 50, hWnd, (HMENU)107, hInstance, nullptr);
     CreateWindowW(L"BUTTON", L"%", WS_CHILD | WS_VISIBLE, 20,  60,  50, 50, hWnd, (HMENU)108, hInstance, nullptr);
     CreateWindowW(L"BUTTON", L"⅟x", WS_CHILD | WS_VISIBLE, 20,  120,  50, 50, hWnd, (HMENU)109, hInstance, nullptr);
-    CreateWindowW(L"BUTTON", L"x²", WS_CHILD | WS_VISIBLE, 80,  120,  50, 50, hWnd, (HMENU)110, hInstance, nullptr);
+    CreateWindowW(L"BUTTON", L"x^", WS_CHILD | WS_VISIBLE, 80,  120,  50, 50, hWnd, (HMENU)110, hInstance, nullptr);
     CreateWindowW(L"BUTTON", L"²√x", WS_CHILD | WS_VISIBLE, 140,  120,  50, 50, hWnd, (HMENU)111, hInstance, nullptr);
     CreateWindowW(L"BUTTON", L".", WS_CHILD | WS_VISIBLE, 140, 360, 50, 50, hWnd, (HMENU)112, hInstance, nullptr);
     CreateWindowW(L"BUTTON", L"+/-", WS_CHILD | WS_VISIBLE, 20, 360, 50, 50, hWnd, (HMENU)113, hInstance, nullptr);
@@ -157,16 +157,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - отправить сообщение о выходе и вернуться
 //
 //
-double Position_ratio_size(double ratio, double size, int px) { // Функция для расположения кнопок с указанием размера можно применять для width и height
-    double result;
+double Position_ratio_size(double ratio, double size, int px, double offset = 0) {
     if (size > 0) {
-        result = (ratio * size) + px;
+        return (ratio * size) + px + offset;  // добавляем отступ
     }
-    else {
-        result = px;
-    }
-    return result;  // Возвращаем результат
+    return px + offset;  // добавляем отступ
 }
+
 
 // Функция для преобразования wchar_t в std::string
 std::string convertWCharToString(const wchar_t* wstr) {
@@ -180,7 +177,7 @@ std::wstring convertStringToWChar(const std::string& str) {
 }
 
 // Функция для обработки нажатия кнопки "1/"
-void handleReciprocalButton(HWND hEdit) {
+void handleReciprocalButton(HWND hEdit, const std::string& str) {
     // Получаем текущее выражение из текстового поля
     wchar_t buffer[256];
     SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
@@ -200,7 +197,7 @@ void handleReciprocalButton(HWND hEdit) {
 
     if (!lastNumber.empty()) {
         // Заменяем последнее введенное число на "1/число"
-        expression.replace(expression.find(lastNumber), lastNumber.length(), "1/" + lastNumber);
+        expression.replace(expression.find(lastNumber), lastNumber.length(), str + lastNumber);
     }
 
     // Устанавливаем обновленное выражение обратно в текстовое поле
@@ -237,56 +234,91 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
         case 1: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"1");  // Добавление числа 1
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
-            break;
-        }
+            std::wstring currentText(buffer);
+            // Проверяем, если текущее содержимое - это "0"
+            if (currentText == L"0") { currentText = L"1"; }
+            else { currentText += L"1"; }
+            // Устанавливаем обновленный текст обратно в поле редактирования
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(currentText.c_str()));
+            break; }
         case 2: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"2");  // Добавление числа 2
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
-            break;
-        }
+            std::wstring currentText(buffer);
+            // Проверяем, если текущее содержимое - это "0"
+            if (currentText == L"0") { currentText = L"2"; }
+            else { currentText += L"2"; }
+            // Устанавливаем обновленный текст обратно в поле редактирования
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(currentText.c_str()));
+            break; }
         case 3: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"3");  // Добавление числа 3
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
-            break;
-        }
+            std::wstring currentText(buffer);
+            // Проверяем, если текущее содержимое - это "0"
+            if (currentText == L"0") { currentText = L"3"; }
+            else { currentText += L"3"; }
+            // Устанавливаем обновленный текст обратно в поле редактирования
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(currentText.c_str()));
+            break; }
         case 4: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"4"); // Добавление числа 4
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            std::wstring currentText(buffer);
+            // Проверяем, если текущее содержимое - это "0"
+            if (currentText == L"0") { currentText = L"4"; }
+            else { currentText += L"4"; }
+            // Устанавливаем обновленный текст обратно в поле редактирования
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(currentText.c_str()));
             break; }
         case 5: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"5"); // Добавление числа 5
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            std::wstring currentText(buffer);
+            // Проверяем, если текущее содержимое - это "0"
+            if (currentText == L"0") { currentText = L"5"; }
+            else { currentText += L"5"; }
+            // Устанавливаем обновленный текст обратно в поле редактирования
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(currentText.c_str()));
             break; }
         case 6: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"6"); // Добавление числа 6
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            std::wstring currentText(buffer);
+            // Проверяем, если текущее содержимое - это "0"
+            if (currentText == L"0") { currentText = L"6"; }
+            else { currentText += L"6"; }
+            // Устанавливаем обновленный текст обратно в поле редактирования
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(currentText.c_str()));
             break; }
         case 7: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"7"); // Добавление числа 7
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            std::wstring currentText(buffer);
+            // Проверяем, если текущее содержимое - это "0"
+            if (currentText == L"0") { currentText = L"7"; }
+            else { currentText += L"7"; }
+            // Устанавливаем обновленный текст обратно в поле редактирования
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(currentText.c_str()));
             break; }
         case 8: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"8"); // Добавление числа 8
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            std::wstring currentText(buffer);
+            // Проверяем, если текущее содержимое - это "0"
+            if (currentText == L"0") { currentText = L"8"; }
+            else { currentText += L"8"; }
+            // Устанавливаем обновленный текст обратно в поле редактирования
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(currentText.c_str()));
             break; }
         case 9: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"9"); // Добавление числа 9
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            std::wstring currentText(buffer);
+            // Проверяем, если текущее содержимое - это "0"
+            if (currentText == L"0") { currentText = L"9"; }
+            else { currentText += L"9"; }
+            // Устанавливаем обновленный текст обратно в поле редактирования
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(currentText.c_str()));
             break; }
         case 100: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"0"); // Добавление числа 0
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            std::wstring currentText(buffer);
+            if (currentText == L"0") { currentText = L"0"; }
+            else { currentText += L"0"; }
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(currentText.c_str()));
             break; }
         case 101: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
@@ -313,21 +345,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
         case 105: {
+            wchar_t buffer[256];
+            // Получаем текущее содержимое поля редактирования
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"<=");  // Добавление оператора /
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            std::wstring currentText(buffer);
+
+            // Проверяем, что строка не пустая
+            if (!currentText.empty()) {
+                currentText.pop_back();
+                if (currentText.empty())  currentText = L"0";
+            }
+            else {
+                currentText = L"0";
+            }
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(currentText.c_str()));
             break;
         }
+
+
         case 106: {
-            SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"C");  // Добавление оператора /
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(L"0"));
             break;
         }
         case 107: {
-            SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"CE");  // Добавление оператора /
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(L"0"));
             break;
         }
         case 108: {
@@ -337,12 +378,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
         case 109: {  // Код для кнопки "1/"
-            handleReciprocalButton(hEdit);
+            handleReciprocalButton(hEdit, "1/");
             break;
         }
         case 110: {
             SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"²");  // Добавление оператора %
+            wcscat_s(buffer, L"^");  // Добавление оператора ^2
             SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
             break;
         }
@@ -359,9 +400,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
         case 113: {
-            SendMessage(hEdit, WM_GETTEXT, sizeof(buffer) / sizeof(buffer[0]), reinterpret_cast<LPARAM>(buffer));
-            wcscat_s(buffer, L"+/-");  // Добавление оператора %
-            SendMessage(hEdit, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(buffer));
+            handleReciprocalButton(hEdit, "-");
             break;
         }
         case 202: { // Нажата кнопка "="
@@ -407,42 +446,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     case WM_SIZE: {
-        // Получаем новый размер окна
-        int width = LOWORD(lParam);
-        int height = HIWORD(lParam);
-        int WIDTH_RATIO = width - (WIDTH * 0.72);
-        int HEIGHT_RATIO = height - (HEIGHT * 0.765);
+        // Массив идентификаторов кнопок
+        int buttonIDs[] = { 1, 4, 7, 108, 109, 113, 2, 5, 8, 100, 107, 110, 3, 6, 9, 106, 111, 112, 101, 102, 103, 104, 105, 202 };
 
-        // Изменяем размер и расположение элементов, если нужно
-        MoveWindow(hEdit, 0, 0, width, height - 370, TRUE);
+        // Размеры кнопок и отступы
+        const int buttonWidth = 74;
+        const int buttonHeight = 60;
+        const int horizontalSpacing = 4;  // Отступ между кнопками по горизонтали
+        const int verticalSpacing = 6;    // Отступ между кнопками по вертикали
+        const int rows = 5;                // Количество рядов
+        const int columns = 4;             // Количество колонок
 
-        // Например, можно изменять кнопки в зависимости от размера окна
-        MoveWindow(GetDlgItem(hWnd, 1),   Position_ratio_size(0, 74, 4), Position_ratio_size(5, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 1
-        MoveWindow(GetDlgItem(hWnd, 4),   Position_ratio_size(0, 74, 4), Position_ratio_size(4, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 4
-        MoveWindow(GetDlgItem(hWnd, 7),   Position_ratio_size(0, 74, 4), Position_ratio_size(3, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 7
-        MoveWindow(GetDlgItem(hWnd, 108), Position_ratio_size(0, 74, 4), Position_ratio_size(1, 60, 6),  WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки %
-        MoveWindow(GetDlgItem(hWnd, 109), Position_ratio_size(0, 74, 4), Position_ratio_size(2, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки ⅟x
-        MoveWindow(GetDlgItem(hWnd, 113), Position_ratio_size(0, 74, 4), Position_ratio_size(6, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки +/-
-        MoveWindow(GetDlgItem(hWnd, 2),   Position_ratio_size(1, 74, 4), Position_ratio_size(5, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 2
-        MoveWindow(GetDlgItem(hWnd, 5),   Position_ratio_size(1, 74, 4), Position_ratio_size(4, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 5
-        MoveWindow(GetDlgItem(hWnd, 8),   Position_ratio_size(1, 74, 4), Position_ratio_size(3, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 8
-        MoveWindow(GetDlgItem(hWnd, 100), Position_ratio_size(1, 74, 4), Position_ratio_size(6, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 0
-        MoveWindow(GetDlgItem(hWnd, 107), Position_ratio_size(1, 74, 4), Position_ratio_size(1, 60, 6),  WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки CE
-        MoveWindow(GetDlgItem(hWnd, 110), Position_ratio_size(1, 74, 4), Position_ratio_size(2, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки x²
-        MoveWindow(GetDlgItem(hWnd, 3),   Position_ratio_size(2, 74, 4), Position_ratio_size(5, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 3
-        MoveWindow(GetDlgItem(hWnd, 6),   Position_ratio_size(2, 74, 4), Position_ratio_size(4, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 6
-        MoveWindow(GetDlgItem(hWnd, 9),   Position_ratio_size(2, 74, 4), Position_ratio_size(3, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки 9
-        MoveWindow(GetDlgItem(hWnd, 106), Position_ratio_size(2, 74, 4), Position_ratio_size(1, 60, 6),  WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки C
-        MoveWindow(GetDlgItem(hWnd, 111), Position_ratio_size(2, 74, 4), Position_ratio_size(2, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки ²√x
-        MoveWindow(GetDlgItem(hWnd, 112), Position_ratio_size(2, 74, 4), Position_ratio_size(6, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки .
-        MoveWindow(GetDlgItem(hWnd, 101), Position_ratio_size(3, 74, 4), Position_ratio_size(5, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки +
-        MoveWindow(GetDlgItem(hWnd, 102), Position_ratio_size(3, 74, 4), Position_ratio_size(4, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки -
-        MoveWindow(GetDlgItem(hWnd, 103), Position_ratio_size(3, 74, 4), Position_ratio_size(3, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки *
-        MoveWindow(GetDlgItem(hWnd, 104), Position_ratio_size(3, 74, 4), Position_ratio_size(2, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки /
-        MoveWindow(GetDlgItem(hWnd, 105), Position_ratio_size(3, 74, 4), Position_ratio_size(1, 60, 6),  WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки ⌫
-        MoveWindow(GetDlgItem(hWnd, 202), Position_ratio_size(3, 74, 4), Position_ratio_size(6, 60, 6), WIDTH_RATIO, HEIGHT_RATIO, TRUE);  // Пример для кнопки =
-        
-        // Аналогично для других кнопок
+        // Позиционирование кнопок
+        for (int i = 0; i < sizeof(buttonIDs) / sizeof(buttonIDs[0]); ++i) {
+            int row = i / columns;  // Номер ряда
+            int column = i % columns;  // Номер колонки
+
+            // Вычисляем позицию
+            int posX = Position_ratio_size(column, buttonWidth, 4, horizontalSpacing * column);
+            int posY = Position_ratio_size(row, buttonHeight, 6, verticalSpacing * row);
+
+            // Перемещение кнопки
+            MoveWindow(GetDlgItem(hWnd, buttonIDs[i]), posX, posY, buttonWidth, buttonHeight, TRUE);
+        }
+
 
         break;
     }
