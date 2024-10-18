@@ -1,4 +1,4 @@
-﻿// header.h: включаемый файл для стандартных системных включаемых файлов
+// header.h: включаемый файл для стандартных системных включаемых файлов
 // или включаемые файлы для конкретного проекта
 //
 
@@ -15,6 +15,7 @@
 #include <tchar.h>
 #include "mathParser.h"
 #include <iostream>
+#include <algorithm>
 #include <stack>
 #include <vector>
 #include <string>
