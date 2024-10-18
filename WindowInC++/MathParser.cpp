@@ -1,20 +1,22 @@
-﻿#include "mathParser.h"
+#include "mathParser.h"
 #include <stack>
 #include <cctype>
 #include <cmath>
 #include <vector>
 #include <string>
+#include <stdexcept>
+
 
 // Проверка, является ли символ оператором
 bool isOperator(const std::string& token) {
-    return token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "1/" || token == "²";
+    return token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "1/" || token == "^";
 }
 
 // Приоритет операций
 int getPrecedence(const std::string& op) {
     if (op == "+" || op == "-" || op == "%") return 1;
     if (op == "*" || op == "/") return 2;
-    if (op == "²") return 3;  // Унарная операция имеет более высокий приоритет
+    if (op == "^") return 3;  // Унарная операция имеет более высокий приоритет
     return 0;
 }
 
@@ -23,12 +25,15 @@ double applyOperation(double a, double b, const std::string& op) {
     if (op == "+") return a + b;
     if (op == "-") return a - b;
     if (op == "*") return a * b;
-    if (op == "/") return a / b;
+    if (op == "/") {
+        if (b == 0) throw std::runtime_error("Деление на ноль.");
+        return a / b; }
     if (op == "%") return a * (b / 100);
     if (op == "1/") return 1 / a;
-    if (op == "²") return a * a;  // Возведение в квадрат
+    if (op == "^") return std::pow(a, b);  // Изменено на возведение a в степень b
     return 0;
 }
+
 
 std::vector<std::string> tokenize(const std::string& expression) {
     std::vector<std::string> tokens;
@@ -37,7 +42,21 @@ std::vector<std::string> tokenize(const std::string& expression) {
     for (size_t i = 0; i < expression.length(); ++i) {
         char c = expression[i];
 
-        if (isdigit(c) || c == '.') {  // Если символ - это число
+        if (c == '+' || c == '-') {
+            // Если это первый символ или предшествующий символ - оператор или открывающая скобка
+            if (i == 0 || isOperator(std::string(1, expression[i - 1])) || expression[i - 1] == '(') {
+                // Это знак для числа, добавляем его к текущему числу
+                num += c;
+            }
+            else {
+                if (!num.empty()) {
+                    tokens.push_back(num);
+                    num.clear();
+                }
+                tokens.push_back(std::string(1, c));
+            }
+        }
+        else if (isdigit(c) || c == '.') {
             num += c;  // Добавляем к текущему числу
         }
         else {
@@ -58,13 +77,15 @@ std::vector<std::string> tokenize(const std::string& expression) {
     return tokens;
 }
 
+
+
 // Преобразование инфиксного выражения в обратную польскую нотацию (RPN)
 std::vector<std::string> toRPN(const std::vector<std::string>& tokens) {
     std::vector<std::string> output;
     std::stack<std::string> operators;
 
     for (const auto& token : tokens) {
-        if (isdigit(token[0])) {  // Число
+        if (isdigit(token[0]) || (token[0] == '-' && token.size() > 1) || (token[0] == '+' && token.size() > 1)) {
             output.push_back(token);
         }
         else if (token == "(") {
@@ -77,7 +98,7 @@ std::vector<std::string> toRPN(const std::vector<std::string>& tokens) {
             }
             operators.pop();  // Убираем "("
         }
-        else if (isOperator(token)) {  // Оператор
+        else if (isOperator(token)) {
             while (!operators.empty() && getPrecedence(operators.top()) >= getPrecedence(token)) {
                 output.push_back(operators.top());
                 operators.pop();
@@ -94,30 +115,44 @@ std::vector<std::string> toRPN(const std::vector<std::string>& tokens) {
     return output;
 }
 
+
+
 // Вычисление выражения в обратной польской нотации (RPN)
 double evaluateRPN(const std::vector<std::string>& rpn) {
     std::stack<double> values;
 
     for (const auto& token : rpn) {
-        if (isdigit(token[0])) {  // Число
+        if (isdigit(token[0]) || (token[0] == '-' && token.size() > 1) || (token[0] == '+' && token.size() > 1)) {  // Число
             values.push(std::stod(token));
         }
         else if (isOperator(token)) {  // Оператор
-            if (token == "1/") {  // Унарные операции
-                double a = values.top(); values.pop();
-                values.push(applyOperation(a, 0, "1/"));  // Унарная операция
+            if (values.empty()) {
+                throw std::runtime_error("Недостаточно значений для операции.");
             }
-            else if (token == "²") {  // Унарные операции
-                double a = values.top(); values.pop();
-                values.push(applyOperation(a, 0, "²"));  // Унарная операция
+
+            double b = values.top(); values.pop();
+
+            // Обрабатываем унарные операции
+            if (token == "1/") {
+                if (b == 0) {
+                    throw std::runtime_error("Деление на ноль.");
+                }
+                values.push(applyOperation(b, 0, token));
             }
-            else {  // Бинарные операции
-                double b = values.top(); values.pop();
+            else {
+                if (values.empty()) {
+                    throw std::runtime_error("Недостаточно значений для операции.");
+                }
                 double a = values.top(); values.pop();
                 values.push(applyOperation(a, b, token));  // Бинарная операция
             }
         }
     }
 
+    if (values.empty()) {
+        throw std::runtime_error("Неизвестная ошибка при вычислении.");
+    }
+
     return values.top();
 }
+
